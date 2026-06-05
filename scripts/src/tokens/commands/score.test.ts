@@ -343,6 +343,28 @@ describe('parseFrontmatter', () => {
     expect(fm!.description).toContain('Line two');
     expect(fm!.description).not.toContain('|-');
   });
+
+  it('parses unquoted YAML boolean for user-invocable as string', () => {
+    const content = '---\nname: my-skill\ndescription: A skill.\nuser-invocable: false\n---\n';
+    const fm = parseFrontmatter(content);
+    expect(fm!.userInvocable).toBe('false');
+  });
+
+  it('parses unquoted YAML boolean for disable-model-invocation as string', () => {
+    const content = '---\nname: my-skill\ndescription: A skill.\ndisable-model-invocation: true\n---\n';
+    const fm = parseFrontmatter(content);
+    expect(fm!.disableModelInvocation).toBe('true');
+  });
+
+  it('validates unquoted boolean fields through checkBooleanField correctly', () => {
+    const content = '---\nname: my-skill\ndescription: A skill.\nuser-invocable: false\ndisable-model-invocation: true\n---\n';
+    const fm = parseFrontmatter(content);
+    expect(fm).not.toBeNull();
+    const r1 = checkBooleanField('user-invocable', fm!.userInvocable);
+    expect(r1.status).toBe('ok');
+    const r2 = checkBooleanField('disable-model-invocation', fm!.disableModelInvocation);
+    expect(r2.status).toBe('ok');
+  });
 });
 
 describe('checkFrontmatterStructure', () => {
@@ -378,6 +400,7 @@ describe('checkAllowedFields', () => {
     const fields = { name: 'x', description: 'y', license: 'MIT', metadata: {} };
     const result = checkAllowedFields(fields);
     expect(result.status).toBe('ok');
+    expect(result.message).toContain('spec-compliant');
   });
 
   it('warns on unknown fields', () => {

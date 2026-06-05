@@ -181,14 +181,14 @@ export function checkAllowedFields(fields: Record<string, unknown>): AdvisoryChe
       name: 'spec-allowed-fields',
       status: 'warning',
       message: `Unknown frontmatter fields: ${extra.join(', ')}. Allowed: ${[...ALLOWED_FIELDS].join(', ')}`,
-      evidence: 'agentskills.io spec: Only name, description, license, allowed-tools, metadata, compatibility allowed'
+      evidence: 'agentskills.io spec fields: name, description, license, allowed-tools, metadata, compatibility; Copilot CLI extensions: user-invocable, disable-model-invocation'
     };
   }
 
   return {
     name: 'spec-allowed-fields',
     status: 'ok',
-    message: 'All frontmatter fields are spec-compliant'
+    message: 'All frontmatter fields are spec-compliant (including Copilot CLI extensions)'
   };
 }
 
@@ -385,7 +385,7 @@ export function checkBooleanField(fieldName: string, value: string | undefined):
     return {
       name: checkName,
       status: 'warning',
-      message: `${fieldName} should be a boolean (true/false), got: "${value}"`,
+      message: `${fieldName} should be a boolean (true/false/yes/no/on/off), got: "${value}"`,
       evidence: 'Copilot CLI skill frontmatter: boolean field'
     };
   }
